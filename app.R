@@ -1,0 +1,287 @@
+#
+# This is a Shiny web application. You can run the application by clicking
+# the 'Run App' button above.
+#
+# Find out more about building applications with Shiny here:
+#
+#    http://shiny.rstudio.com/
+#
+
+Sys.setlocale("LC_ALL", "en_US.UTF-8")
+library(shiny)
+library(thematic)
+library(shinythemes)
+library(shinycssloaders)
+library(shinyWidgets)
+library(tidyverse) 
+library(effectsize)
+library(plyr)
+library(scales)
+
+input <<- tibble(
+  alts = "Group 1 ≠ Group 2",
+  mean1 = 18.1, mean2 = 3.1,
+  sd1 = 20.3, sd2 = 2.8,
+  reps = 1000,
+  sample_size = 50,
+  alpha = 0.05
+)
+
+# Define UI for application that draws a histogram
+ui <- fluidPage(
+  theme = shinytheme("slate"),
+  
+  # Application title
+  titlePanel(title = tags$link(rel = "icon",
+                               type = "image",
+                               href = "https://image.pngaaa.com/393/402393-middle.png"),
+             "PowerSimulate (independent t- test)"),
+  HTML("<center><img src='ind_t_esp.svg'' width='600'></center>"),
+  tags$h3(HTML("<center>Prueba <em>t</em> independiente</center>")),
+  p(HTML("<center>Código disponible en 
+      <a style=color:#ff5555;  href='https://github.com/JDLeongomez/PowerSimulate_ind_t_ES'>GitHub</a>
+      - Creado por
+      <a style=color:#ff5555;  href='https://jdleongomez.info/es/'>Juan David Leongómez</a>
+      · 2023 · <a style=color:#4075de;  href='https://shiny.jdl-svr.lat/PowerSimulate_ind_t_EN/'>
+      English version</a></center>")),
+  hr(),
+  p(HTML("<center>Análisis de poder estadístico a partir la simulación de una población y 
+         en la probabilidad de obtener un resultado significativo con una muestra aleatoria de 
+         un tamaño determinado.<br>Aunque existen herramientas más directas para el análisis de 
+         poder en el caso de las pruebas <em>t</em>, esta aplicación se basa en simulaciones 
+         para ilustrar el concepto de poder estadístico.</center>")),
+  fluidRow(
+    column(2,
+           tags$h2("Parámetros de los grupos"),
+           tags$h4("Grupo 1"),
+           textInput(inputId = "label1",
+                     label = "Etiqueta del grupo 1",
+                     value = "Control",
+                     width = '300px'),
+           numericInput(inputId = "mean1",
+                        label = "Media",
+                        min = -Inf,
+                        max = Inf,
+                        value = 18.1,
+                        step = 0.0001,
+                        width = '300px'),
+           numericInput(inputId = "sd1",
+                        label = "Desviación estándar",
+                        min = -Inf,
+                        max = Inf,
+                        value = 3.1,
+                        step = 0.0001,
+                        width = '300px'),
+           hr(),
+           tags$h4("Group 2"),
+           textInput(inputId = "label2",
+                     label = "Etiqueta del grupo 1",
+                     value = "Experimental",
+                     width = '300px'),
+           numericInput(inputId = "mean2",
+                        label = "Media",
+                        min = -Inf,
+                        max = Inf,
+                        value = 20.3,
+                        step = 0.0001,
+                        width = '300px'),
+           numericInput(inputId = "sd2",
+                        label = "Desviación estándar",
+                        min = -Inf,
+                        max = Inf,
+                        value = 2.8,
+                        step = 0.0001,
+                        width = '300px')
+    ),
+    column(4,
+           tags$h1("Tamaño del efecto en la población"),
+           tags$h3("Si esta fuera la diferencia en la población"),
+           plotOutput("effectPlot") %>% 
+             withSpinner(color = "#ff5555"),
+           tags$p(HTML("<b style=color:#ff5555;>NOTA:</b> Mientras que la <em>d</em> de Cohen es el 
+                       tamaño del efecto más común para las diferencias estandarizadas entre 
+                       dos medias. Sin embargo, tiene algunas limitaciones: en primer lugar, 
+                       agrupa las desviaciones estándar de los dos grupos, lo que puede no ser 
+                       ideal si son muy diferentes, y tiende a proporcionar estimaciones 
+                       sesgadas cuando los grupos tienen tamaños de muestra pequeños. Por este 
+                       motivo, la <em>g</em> de Hedges y el delta de Glass son alternativas valiosas.")),
+    ),
+    column(2,
+           tags$h2("Parámetros de simulación"),
+           tags$h4("Tamaño de muestra"),
+           tags$style(HTML(".js-irs-0 .irs-single, .js-irs-0 .irs-bar-edge, .js-irs-0 .irs-bar {background:#ff5555}")),
+           sliderInput(inputId = "sample_size",
+                       label = "Tamaño de muestra por grupo",
+                       min = 5,
+                       max = 1000,
+                       value = 30,
+                       step = 1,
+                       width = '300px'),
+           tags$style(HTML(".js-irs-1 .irs-single, .js-irs-1 .irs-bar-edge, .js-irs-1 .irs-bar {background:#ff5555}")),
+           sliderInput(inputId = "alpha",
+                       label = HTML("Nivel de significación &alpha; (típicamente 0.05)"),
+                       min = 0,
+                       max = 1,
+                       value = 0.05,
+                       step = 0.001,
+                       width = '300px'),
+           selectInput(inputId = "alts",
+                       label = "Hipótesis",
+                       choices = c("Grupo 1 ≠ Grupo 2", 
+                                   "Grupo 1 > Grupo 2",
+                                   "Grupo 1 < Grupo 2"
+                       )),
+           numericInput(inputId = "reps",
+                        label = HTML("Número de simulaciones<br>
+                                     <span style='font-weight:normal'>Números más grandes aumentan la 
+                                     precisión pero requieren más tiempo. Por defecto ejecuta sólo 
+                                     100 simulaciones, pero una vez que hayas comprobado todos los parámetros, 
+                                     te sugiero que ejecutes 1000+ simulaciones para aumentar la precisión.</span>"),
+                        min = 1,
+                        max = 10000000,
+                        value = 100,
+                        step = 1,
+                        width = '300px')
+    ),
+    column(4,
+           tags$h1("Poder estadístico"),
+           tags$h3("Este es el poder estadístico que alcanzarías"),
+           plotOutput("powerPlot") %>% 
+             withSpinner(color = "#ff5555"),
+           htmlOutput("powText")
+    )
+  )
+)
+
+server <- function(input, output, session) {
+  
+  # Simulate population
+  dat <- reactive({
+    datos <- tibble(A = rnorm(100000, mean = input$mean1, sd = input$sd1),
+                    B = rnorm(100000, mean = input$mean2, sd = input$sd2))
+    return(datos)
+  })
+  
+  # Calculate effect sizes
+  cohen.d <- reactive({
+    coh.d <- cohens_d(x = dat()$A, y = dat()$B,
+                      pooled_sd = FALSE,
+                      paired = FALSE,
+                      ci = 0.95)
+    return(coh.d)
+  })
+  hedges.g <- reactive({
+    hed.g <- hedges_g(x = dat()$A, y = dat()$B,
+                      pooled_sd = FALSE,
+                      paired = FALSE,
+                      ci = 0.95)
+    return(hed.g)
+  })   
+  glass.delta <- reactive({
+    gla.d <- glass_delta(x = dat()$A, y = dat()$B,
+                         ci = 0.95)
+    return(gla.d)
+  })
+  
+  # Create normal distributions with input means and SDs
+  dat.dist <- reactive({
+    x = seq(min(dat()), max(dat()), length = 200)
+    dat.distri <- data.frame(A = dnorm(x, mean = input$mean1, sd = input$sd1),
+                             B = dnorm(x, mean = input$mean2, sd = input$sd2), x = x) %>%
+      pivot_longer(cols = A:B, names_to = "Group", values_to = "Value")
+    return(dat.distri)
+  })
+  
+  # Population distribution plot 
+  output$effectPlot <- renderPlot({
+    ggplot(data = dat.dist(), aes(x = x, fill = Group)) +
+      geom_polygon(aes(y = Value), alpha = 0.8) +
+      xlab("Valor") + ylab("Densidad de probabilidad") + 
+      geom_vline(aes(xintercept = input$mean1, color = "white"),
+                 linetype="dashed",
+                 show.legend = FALSE) +
+      geom_vline(aes(xintercept = input$mean2, color = "white"),
+                 linetype="dashed",
+                 show.legend = FALSE) +
+      scale_fill_discrete(labels = c(input$label1, input$label2)) +
+      annotate("text", x = min(dat.dist()$x), y = Inf, 
+               hjust = 0, vjust = 2, size = 7,
+               label = paste0("d de Cohen = ", round(abs(cohen.d()$Cohens_d), 2))) +
+      annotate("text", x = min(dat.dist()$x), y = Inf, 
+               hjust = 0, vjust = 6,
+               label = paste0("g de Hedges = ", round(abs(hedges.g()$Hedges_g), 2))) +
+      annotate("text", x = min(dat.dist()$x), y = Inf, 
+               hjust = 0, vjust = 8,
+               label = paste0("delta de Glass = ", round(abs(glass.delta()$Glass_delta), 2))) +
+      geom_segment(aes(x = input$mean1, y = max(dat.dist()$Value)*0.5, 
+                       xend = input$mean2, yend = max(dat.dist()$Value)*0.5), 
+                   arrow = arrow(length = unit(0.02, "npc"), ends = "both")) +
+      annotate("text", x = Inf, y = Inf, 
+               hjust = 1.1, vjust = 2, size = 5,
+               label = paste0("Diferencia de medias = ", round(abs(input$mean1 - input$mean2), 2))) +
+      theme(legend.position="bottom", 
+            legend.title=element_text(size=14),
+            legend.text = element_text(size = 12))
+  })
+  
+  # Create object with selected hypothesis alternative
+  altern <<- reactive({
+    dplyr::case_when(
+      input$alts == "Grupo 1 ≠ Grupo 2" ~ "two.sided",
+      input$alts == "Grupo 1 > Grupo 2" ~ "greater",
+      TRUE ~ "less")
+  })
+  
+  sig.lev <<- reactive({
+    input$alpha
+  })
+  
+  # Simulate samples and test significance in each
+  dat.sim <- reactive({
+    req(input$alts)
+    dato <- ddply(map_dfr(seq_len(input$reps), ~dat() %>%
+                            sample_n(input$sample_size) %>%
+                            mutate(sample = as.factor(.x))),
+                  .(sample),
+                  summarise,
+                  p = round(t.test(x = A, y = B,
+                                   alternative = altern(), 
+                                   paired = TRUE)$p.value, 3),
+                  "Significación" = ifelse(p <= sig.lev(), "Significativo", "No significativo"))
+    return(dato)
+  })
+  
+  # Power simulation plot 
+  output$powerPlot <- renderPlot({
+    ggplot(dat.sim(), aes(x = p, fill = Significación)) +
+      scale_fill_hue(direction = -1) +
+      geom_histogram(bins = 1/input$alpha, breaks = seq(0, 1, input$alpha), alpha = 0.8) +
+      labs(y = "Conteo", x = "Valor p") +
+      scale_x_continuous(breaks = pretty_breaks(n = 20)) +
+      annotate("text", x = 0.5, y = Inf, size = 7, vjust = 2,
+               label = paste0("Poder (1 - β) = ", round(sum(dat.sim()$Significación == "Significativo") / input$reps, 3))) +
+      annotate("text", x = 0.5, y = Inf, vjust = 5,
+               label = paste0("Tamaño de muestra = ", input$sample_size)) +
+      annotate("text", x = 0.5, y = Inf, vjust = 6.5,
+               label = paste0("α = ", input$alpha)) +
+      theme(legend.position="bottom", 
+            legend.title=element_text(size=14),
+            legend.text = element_text(size = 12))
+  })
+  
+  output$powText <- renderText({
+    paste("<b style=color:#ff5555;>INTERPRETACIÓN: </b>
+          El poder no es más que la proporción de resultados significativos 
+          (<em>p</em> < α). Así, si la diferencia real en la población fuera la especificada, con una 
+          muestra aleatoria de ", input$sample_size, " sujetos, 
+          obtendrías un resultado significativo en aproximadamente el ", 
+          percent(round(sum(dat.sim()$Significación == "Significativo") / input$reps, 2)),
+          " de los casos.")
+  })
+}
+
+# Same theme for plots
+thematic_shiny()
+
+# Run the application 
+shinyApp(ui = ui, server = server)
