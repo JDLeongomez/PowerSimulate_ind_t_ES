@@ -1,19 +1,19 @@
-# <img src="https://raw.githubusercontent.com/JDLeongomez/PowerSimulate_ind_t_EN/master/www/ind_t_eng.svg" align="left" width=400 height=100 alt=""/>
+# <img src="https://raw.githubusercontent.com/JDLeongomez/PowerSimulate_ind_t_ES/master/www/ind_t_esp.svg" align="left" width=400 height=100 alt=""/>
 
-## Independent *t*-test
+## Prueba *t* independiente
 <br>
-Power analysis based on the simulation of a population, and the probability of obtaining a significant result with a sample of a given size.
-Although more direct tools for power analysis exist for simulations to illustrate the concept of statistical power.
+Análisis de poder basado en la simulación de una población y en la probabilidad de obtener un resultado significativo con una muestra de un tamaño determinado.
+Aunque existen herramientas más directas para el análisis de poder en el caso de las pruebas *t*, esta aplicación se basa en simulaciones para ilustrar el concepto de poder estadístico
 
 <hr>
 
-This app is available from my (rather slow) personal [Shiny server](https://shiny.jdl-svr.lat/PowerSimulate_ind_t_EN/). However, if that is too slow or my server is not working, you can always run it locally in your computer with R installed. 
+Esta aplicación está disponible en mi (bastante lento) [servidor personal Shiny](https://shiny.jdl-svr.lat/PowerSimulate_ind_t_ES/). Sin embargo, si corre demasiado lento o mi servidor no funciona, siempre puedes ejecutarla localmente en tu ordenador con R instalado. 
 
-To do this, you can simply run the code below in R:
+Para ello, basta con ejecutar el código siguiente en R:
 
 ```R
 library(shiny)
-runGitHub("powersimulate_ind_t_EN", "JDLeongomez")
+runGitHub("PowerSimulate_ind_t_ES", "JDLeongomez")
 ```
 
-(**NOTA:** Para la versión en Español, entra a https://github.com/JDLeongomez/powersimulate_ind_t_ES)
+(**NOTE:** For the English version, go to https://github.com/JDLeongomez/PowerSimulate_ind_t_EN)
