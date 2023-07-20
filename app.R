@@ -45,8 +45,8 @@ ui <- fluidPage(
       · 2023 · <a style=color:#4075de;  href='https://shiny.jdl-svr.lat/PowerSimulate_ind_t_EN/'>
       English version</a></center>")),
   hr(),
-  p(HTML("<center>Análisis de poder estadístico a partir de la simulación de una población y 
-         en la probabilidad de obtener un resultado significativo con una muestra aleatoria de 
+  p(HTML("<center>Análisis de poder estadístico basado en la simulación de una población y 
+         la probabilidad de obtener un resultado significativo con una muestra aleatoria de 
          un tamaño determinado.<br>Aunque existen herramientas más directas para el análisis de 
          poder en el caso de las pruebas <em>t</em>, esta aplicación se basa en simulaciones 
          para ilustrar el concepto de poder estadístico.</center>")),
