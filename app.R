@@ -7,7 +7,7 @@
 #    http://shiny.rstudio.com/
 #
 
-Sys.setlocale("LC_ALL", "en_US.UTF-8")
+Sys.setlocale("LC_ALL", "es_CO.UTF-8")
 library(shiny)
 library(thematic)
 library(shinythemes)
