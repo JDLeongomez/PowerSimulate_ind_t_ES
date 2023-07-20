@@ -36,7 +36,7 @@ ui <- fluidPage(
                                type = "image",
                                href = "https://image.pngaaa.com/393/402393-middle.png"),
              "PowerSimulate (prueba t independiente)"),
-  HTML("<center><img src='ind_t_esp.svg'' width='600'></center>"),
+  HTML("<center><img src='powersimulate.svg'' width='600'></center>"),
   tags$h3(HTML("<center>Prueba <em>t</em> independiente</center>")),
   p(HTML("<center>Código disponible en 
       <a style=color:#ff5555;  href='https://github.com/JDLeongomez/PowerSimulate_ind_t_ES'>GitHub</a>
@@ -120,7 +120,7 @@ ui <- fluidPage(
                        width = '300px'),
            tags$style(HTML(".js-irs-1 .irs-single, .js-irs-1 .irs-bar-edge, .js-irs-1 .irs-bar {background:#ff5555}")),
            sliderInput(inputId = "alpha",
-                       label = HTML("Nivel de significación &alpha; (típicamente 0.05)"),
+                       label = HTML("Nivel de significación(típicamente &alpha; = 0.05)"),
                        min = 0,
                        max = 1,
                        value = 0.05,
