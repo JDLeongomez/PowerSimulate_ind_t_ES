@@ -43,7 +43,8 @@ ui <- fluidPage(
       - Creado por
       <a style=color:#ff5555;  href='https://jdleongomez.info/es/'>Juan David Leongómez</a>
       · 2023 · <a style=color:#4075de;  href='https://shiny.jdl-svr.lat/PowerSimulate_ind_t_EN/'>
-      English version</a></center>")),
+      English version</a> 
+      · <a style=color:#ff5555;  href='https://shiny.jdl-svr.lat/PowerSimulate_corr_ES'>PowerSimulate: Correlación.</a></center>")),
   hr(),
   p(HTML("<center>Análisis de poder estadístico basado en la simulación de una población y 
          la probabilidad de obtener un resultado significativo con una muestra aleatoria de 
@@ -203,7 +204,8 @@ server <- function(input, output, session) {
       geom_vline(aes(xintercept = input$mean2, color = "white"),
                  linetype="dashed",
                  show.legend = FALSE) +
-      scale_fill_discrete(labels = c(input$label1, input$label2)) +
+      scale_fill_manual(values = c("#4075de", "#ff5555"),
+                        labels = c(input$label1, input$label2)) +
       annotate("text", x = min(dat.dist()$x), y = Inf, 
                hjust = 0, vjust = 2, size = 7,
                label = paste0("d de Cohen = ", round(abs(cohen.d()$Cohens_d), 2))) +
@@ -256,6 +258,7 @@ server <- function(input, output, session) {
     ggplot(dat.sim(), aes(x = p, fill = Significación)) +
       scale_fill_hue(direction = -1) +
       geom_histogram(bins = 1/input$alpha, breaks = seq(0, 1, input$alpha), alpha = 0.8) +
+      scale_fill_manual(values = c("#4075de", "#ff5555")) +
       labs(y = "Conteo", x = "Valor p") +
       scale_x_continuous(breaks = pretty_breaks(n = 20)) +
       annotate("text", x = 0.5, y = Inf, size = 7, vjust = 2,
@@ -266,17 +269,18 @@ server <- function(input, output, session) {
                label = paste0("α = ", input$alpha)) +
       theme(legend.position="bottom", 
             legend.title=element_text(size=14),
-            legend.text = element_text(size = 12))
+            legend.text = element_text(size = 12)) +
+      guides(fill = guide_legend(reverse=TRUE))
   })
   
   output$powText <- renderText({
     paste("<b style=color:#ff5555;>INTERPRETACIÓN: </b>
           El poder no es más que la proporción de resultados significativos 
           (<em>p</em> < α). Así, si la diferencia real en la población fuera la especificada, con una 
-          muestra aleatoria de ", input$sample_size, " sujetos, 
-          obtendrías un resultado significativo en aproximadamente el ", 
+          muestra aleatoria de <font color=\'#ff5555\'><b>", input$sample_size, "</b></font> sujetos, 
+          obtendrías un resultado significativo en aproximadamente el <font color=\'#ff5555\'><b>", 
           percent(round(sum(dat.sim()$Significación == "Significativo") / input$reps, 2)),
-          " de los casos.")
+          "</b></font> de los casos.")
   })
 }
 
