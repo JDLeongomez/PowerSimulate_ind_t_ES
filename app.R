@@ -45,7 +45,7 @@ ui <- fluidPage(
       · 2023 · <a style=color:#4075de;  href='https://shiny.jdl-svr.lat/PowerSimulate_ind_t_EN/'>
       English version</a></center>")),
   hr(),
-  p(HTML("<center>Análisis de poder estadístico a partir la simulación de una población y 
+  p(HTML("<center>Análisis de poder estadístico a partir de la simulación de una población y 
          en la probabilidad de obtener un resultado significativo con una muestra aleatoria de 
          un tamaño determinado.<br>Aunque existen herramientas más directas para el análisis de 
          poder en el caso de las pruebas <em>t</em>, esta aplicación se basa en simulaciones 
@@ -98,8 +98,8 @@ ui <- fluidPage(
            tags$h3("Si esta fuera la diferencia en la población"),
            plotOutput("effectPlot") %>% 
              withSpinner(color = "#ff5555"),
-           tags$p(HTML("<b style=color:#ff5555;>NOTA:</b> Mientras que la <em>d</em> de Cohen es el 
-                       tamaño del efecto más común para las diferencias estandarizadas entre 
+           tags$p(HTML("<b style=color:#ff5555;>NOTA:</b> La <em>d</em> de Cohen es el 
+                       tamaño del efecto más común para diferencias estandarizadas entre 
                        dos medias. Sin embargo, tiene algunas limitaciones: en primer lugar, 
                        agrupa las desviaciones estándar de los dos grupos, lo que puede no ser 
                        ideal si son muy diferentes, y tiende a proporcionar estimaciones 
