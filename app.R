@@ -133,16 +133,18 @@ ui <- fluidPage(
                                    "Grupo 1 < Grupo 2"
                        )),
            numericInput(inputId = "reps",
-                        label = HTML("Número de simulaciones<br>
-                                     <span style='font-weight:normal'>Números más grandes aumentan la 
-                                     precisión pero requieren más tiempo. Por defecto ejecuta sólo 
-                                     100 simulaciones, pero una vez que hayas comprobado todos los parámetros, 
-                                     te sugiero que ejecutes 1000+ simulaciones para aumentar la precisión.</span>"),
+                        label = HTML("Número de simulaciones:
+                                     <span style='font-weight:normal'>Por defecto se ejecutan sólo 100 simulaciones, 
+                                     pero una vez que hayas comprobado todos los parámetros, te sugiero que ejecutes 
+                                     1000 o más simulaciones para aumentar la precisión (entre más simulaciones hagas, 
+                                     más tiempo tomará).</span>"),
                         min = 1,
-                        max = 10000000,
+                        max = 1000000,
                         value = 100,
                         step = 1,
-                        width = '300px')
+                        width = '300px'),
+           nextGenShinyApps::submitButton("runSim", text = "¿Todo listo? ¡Corre la simulación!", 
+                                          icon("paper-plane"), bg.type = "danger")
     ),
     column(4,
            tags$h1("Poder estadístico"),
@@ -262,7 +264,7 @@ server <- function(input, output, session) {
       labs(y = "Conteo", x = "Valor p") +
       scale_x_continuous(breaks = pretty_breaks(n = 20)) +
       annotate("text", x = 0.5, y = Inf, size = 7, vjust = 2,
-               label = paste0("Poder (1 - β) = ", round(sum(dat.sim()$Significación == "Significativo") / input$reps, 3))) +
+               label = paste0("Poder (1 - β) = ", round(sum(dat.sim()$Significación == "Significativo") / input$reps, 2))) +
       annotate("text", x = 0.5, y = Inf, vjust = 5,
                label = paste0("Tamaño de muestra = ", input$sample_size)) +
       annotate("text", x = 0.5, y = Inf, vjust = 6.5,
@@ -277,7 +279,7 @@ server <- function(input, output, session) {
     paste("<b style=color:#ff5555;>INTERPRETACIÓN: </b>
           El poder no es más que la proporción de resultados significativos 
           (<em>p</em> < α). Así, si la diferencia real en la población fuera la especificada, con una 
-          muestra aleatoria de <font color=\'#ff5555\'><b>", input$sample_size, "</b></font> sujetos, 
+          muestra aleatoria de <font color=\'#ff5555\'><b><em>n</em> = ", input$sample_size, "</b></font>, 
           obtendrías un resultado significativo en aproximadamente el <font color=\'#ff5555\'><b>", 
           percent(round(sum(dat.sim()$Significación == "Significativo") / input$reps, 2)),
           "</b></font> de los casos.")
