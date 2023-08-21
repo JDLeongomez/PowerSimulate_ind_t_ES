@@ -35,7 +35,7 @@ ui <- fluidPage(
   titlePanel(title = tags$link(rel = "icon",
                                type = "image",
                                href = "https://image.pngaaa.com/393/402393-middle.png"),
-             "PowerSimulate (prueba t independiente)"),
+             "PowerSimulate: Prueba t independiente"),
   HTML("<center><a href='https://shiny.jdl-svr.lat/PowerSimulate'><img src='powersimulate.svg'' width='600'></a></center>"),
   tags$h3(HTML("<center>Prueba <em>t</em> independiente</center>")),
   p(HTML("<center>Código disponible en 
