@@ -74,7 +74,7 @@ ui <- fluidPage(
                         step = 0.0001,
                         width = '300px'),
            hr(),
-           tags$h4("Group 2"),
+           tags$h4("Grupo 2"),
            textInput(inputId = "label2",
                      label = "Etiqueta del grupo 1",
                      value = "Experimental",
@@ -191,13 +191,13 @@ server <- function(input, output, session) {
     x = seq(min(dat()), max(dat()), length = 200)
     dat.distri <- data.frame(A = dnorm(x, mean = input$mean1, sd = input$sd1),
                              B = dnorm(x, mean = input$mean2, sd = input$sd2), x = x) %>%
-      pivot_longer(cols = A:B, names_to = "Group", values_to = "Value")
+      pivot_longer(cols = A:B, names_to = "Grupo", values_to = "Value")
     return(dat.distri)
   })
   
   # Population distribution plot 
   output$effectPlot <- renderPlot({
-    ggplot(data = dat.dist(), aes(x = x, fill = Group)) +
+    ggplot(data = dat.dist(), aes(x = x, fill = Grupo)) +
       geom_polygon(aes(y = Value), alpha = 0.8) +
       xlab("Valor") + ylab("Densidad de probabilidad") + 
       geom_vline(aes(xintercept = input$mean1, color = "white"),
