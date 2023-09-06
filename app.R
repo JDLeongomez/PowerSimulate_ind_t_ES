@@ -76,7 +76,7 @@ ui <- fluidPage(
            hr(),
            tags$h4("Grupo 2"),
            textInput(inputId = "label2",
-                     label = "Etiqueta del grupo 1",
+                     label = "Etiqueta del grupo 2",
                      value = "Experimental",
                      width = '300px'),
            numericInput(inputId = "mean2",
